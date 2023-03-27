@@ -1,18 +1,14 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
+	"flag"
 )
 
 func main() {
+	listenAddr := flag.String("listenaddr", ":3000", "listen port for the app")
+	flag.Parse()
 	svc := NewLoggingService(NewMetricService(&priceFetcher{}))
 
-	price, err := svc.FetchPrice(context.Background(), "ETH")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("the price of %s is %f", "ETH", price)
+	server := NewJSONAPIServer(*listenAddr, svc)
+	server.Run()
 }
