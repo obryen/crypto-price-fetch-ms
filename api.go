@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+
+	"github.com/obryen/crypto-price-fetch/types"
 )
 
 type APIfunc func(context.Context, http.ResponseWriter, *http.Request) error
@@ -12,11 +14,6 @@ type APIfunc func(context.Context, http.ResponseWriter, *http.Request) error
 type JSONAPIServer struct {
 	listAdd string
 	svc     PriceFetcher
-}
-
-type PriceRes struct {
-	Ticker string  `json:"ticker"`
-	Price  float64 `json:"price"`
 }
 
 func NewJSONAPIServer(listAdd string, svc PriceFetcher) *JSONAPIServer {
@@ -54,7 +51,7 @@ func (j *JSONAPIServer) handleFetchPrice(ctx context.Context, w http.ResponseWri
 		return err
 	}
 
-	priceResp := PriceRes{
+	priceResp := types.PriceRes{
 		Price:  price,
 		Ticker: ticker,
 	}
