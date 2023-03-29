@@ -20,7 +20,9 @@ func NewClient(endPoint string) *Client {
 }
 
 func (c *Client) FetchPrice(ctx context.Context, ticker string) (*types.PriceRes, error) {
-	req, err := http.NewRequest("get", c.endpoint, nil)
+	endpoint := fmt.Sprintf("%s?ticker=%s", c.endpoint, ticker)
+	fmt.Println("endpoint val \n", endpoint)
+	req, err := http.NewRequest("get", endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,11 +33,11 @@ func (c *Client) FetchPrice(ctx context.Context, ticker string) (*types.PriceRes
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		httpErr := map[string]any{}
+		httpErr := make(map[string]interface{})
 		if err := json.NewDecoder(resp.Body).Decode(&httpErr); err != nil {
 			return nil, err
 		}
-		return nil, fmt.Errorf("no status OK code %s", httpErr["error"])
+		return nil, fmt.Errorf("service responded with none status OK code: %s", httpErr["error"])
 	}
 
 	priceRes := new(types.PriceRes)
