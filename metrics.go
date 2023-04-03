@@ -6,10 +6,10 @@ import (
 )
 
 type metricService struct {
-	next PriceFetcher
+	next IPriceFetcherService
 }
 
-func NewMetricService(next PriceFetcher) PriceFetcher {
+func NewMetricService(next IPriceFetcherService) IPriceFetcherService {
 	return &metricService{
 		next: next,
 	}

@@ -8,10 +8,10 @@ import (
 )
 
 type loggingService struct {
-	next PriceFetcher
+	next IPriceFetcherService
 }
 
-func NewLoggingService(next PriceFetcher) PriceFetcher {
+func NewLoggingService(next IPriceFetcherService) IPriceFetcherService {
 	return &loggingService{
 		next: next,
 	}

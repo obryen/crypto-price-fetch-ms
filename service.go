@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type PriceFetcher interface {
+type IPriceFetcherService interface {
 	FetchPrice(context.Context, string) (float64, error)
 }
 
@@ -20,7 +20,7 @@ func (s *priceFetcher) FetchPrice(ctx context.Context, ticker string) (float64, 
 var priceMock = map[string]float64{
 	"BTC": 20000.0,
 	"ETH": 200.1,
-	"RPX": 100.5,
+	"XRP": 100.5,
 }
 
 func MockPriceFetching(ctx context.Context, ticker string) (float64, error) {
