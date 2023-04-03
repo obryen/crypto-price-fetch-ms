@@ -14,10 +14,13 @@ func main() {
 
 	// return
 
-	listenAddr := flag.String("listenaddr", ":3000", "listen port for the app")
+	jsonListenAddr := flag.String("listenaddr", ":3000", "json listn address for the app")
+	grpcListenAddr := flag.String("listenaddr", ":3000", "grpc listn address for the app")
 	flag.Parse()
 	svc := NewLoggingService(NewMetricService(&priceFetcher{}))
 
-	server := NewJSONAPIServer(*listenAddr, svc)
-	server.Run()
+	jsonServer := NewJSONAPIServer(*jsonListenAddr, svc)
+	jsonServer.Run()
+
+	go MakeGRPCServerAndRun(*grpcListenAddr, svc)
 }
