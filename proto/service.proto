@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "github.com/obryen/crypto-price-fetch/proto";
 
-service PriceFetcher {
+service PriceFetcher {  
     rpc FetchPrice(PriceRequest) returns (PriceResponse);
 }
 

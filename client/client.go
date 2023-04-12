@@ -6,8 +6,21 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/obryen/crypto-price-fetch/proto"
 	"github.com/obryen/crypto-price-fetch/types"
+	"google.golang.org/grpc"
 )
+
+func NewGRPCClient(remoteAddress string) (proto.PriceFetcherClient, error) {
+	conn, err := grpc.Dial(remoteAddress, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+
+	c := proto.NewPriceFetcherClient(conn)
+
+	return c, nil
+}
 
 type Client struct {
 	endpoint string

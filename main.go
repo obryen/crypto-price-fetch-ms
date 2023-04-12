@@ -1,26 +1,42 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/obryen/crypto-price-fetch/client"
+	"github.com/obryen/crypto-price-fetch/proto"
 )
 
 func main() {
-	// client := client.NewClient("http://localhost:3000/")
-	// price, err := client.FetchPrice(context.Background(), "ETH")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Print("price", price)
+	var (
+		jsonListenAddr = flag.String("listenaddr", ":3000", "json listn address for the app")
+		grpcListenAddr = flag.String("listenaddr", ":4000", "grpc listn address for the app")
+		svc            = loggingService{&priceFetcher{}}
+		ctx            = context.Background()
+	)
 
-	// return
-
-	jsonListenAddr := flag.String("listenaddr", ":3000", "json listn address for the app")
-	grpcListenAddr := flag.String("listenaddr", ":3000", "grpc listn address for the app")
 	flag.Parse()
-	svc := NewLoggingService(NewMetricService(&priceFetcher{}))
+	grpcClient, err := client.NewGRPCClient(":4000")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go func() {
+		time.Sleep(3 * time.Second)
+		resp, err := grpcClient.FetchPrice(ctx, &proto.PriceRequest{Ticker: "BTC"})
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%+v/n", resp)
+	}()
+
+	go MakeGRPCServerAndRun(*grpcListenAddr, svc)
 
 	jsonServer := NewJSONAPIServer(*jsonListenAddr, svc)
 	jsonServer.Run()
 
-	go MakeGRPCServerAndRun(*grpcListenAddr, svc)
 }
